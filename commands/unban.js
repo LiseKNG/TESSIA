@@ -1,5 +1,7 @@
 // commands/unban.js
 
+import { reply } from '../lib/reply.js'
+
 import fs from 'fs'
 
 export const name = 'unban'
@@ -29,7 +31,7 @@ export async function execute({ sock, m }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA UNBAN 〕━━⬣
+`╭━━〔 CRIMSON BOT UNBAN 〕━━⬣
 ┃ ⚠️ Mentionne un membre
 ┃ Exemple:
 ┃ .unban @user
@@ -57,12 +59,12 @@ export async function execute({ sock, m }) {
         },
 
         caption:
-`╭━━〔 TESSIA UNBAN 〕━━⬣
+`╭━━〔 CRIMSON BOT UNBAN 〕━━⬣
 
 ┃ ✅ Utilisateur débanni
 ┃ 👤 @${user.split('@')[0]}
 
-┃ ⚡ Powered By TESSIA
+┃ ⚡ Powered By CRIMSON
 
 ╰━━━━━━━━━━━━⬣`,
 
