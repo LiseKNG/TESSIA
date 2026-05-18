@@ -1,3 +1,5 @@
+import { reply } from '../lib/reply.js'
+
 export const name = 'ping'
 
 export async function execute({ sock, m }) {
