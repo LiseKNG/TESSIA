@@ -7,42 +7,57 @@ import makeWASocket, {
 
 import P from 'pino'
 import fs from 'fs'
+import os from 'os'
 
 import { loadCommands, handleCommand } from './handler/commandHandler.js'
 import { loadDB } from './handler/db.js'
 import { config } from './config.js'
 
-// ✅ CLEAN NUMBER
-const PHONE = config.owner.replace(/[^0-9]/g, '')
+// ✅ CLEAN OWNER NUMBER
+const PHONE =
+config.owner.replace(/[^0-9]/g, '')
 
+// ✅ PAIR LOCK
 let pairingDone = false
 
-// ✅ MEDIA CACHE
-const thumb = fs.existsSync('./media/thumb.jpg')
-  ? fs.readFileSync('./media/thumb.jpg')
-  : null
+// ✅ THUMB CACHE
+const thumb =
+fs.existsSync('./media/thumb.jpg')
+? fs.readFileSync('./media/thumb.jpg')
+: null
 
-const menuVideo = fs.existsSync('./media/menu.mp4')
-  ? fs.readFileSync('./media/menu.mp4')
-  : null
+// ✅ MENU VIDEO CACHE
+const menuVideo =
+fs.existsSync('./media/menu.mp4')
+? fs.readFileSync('./media/menu.mp4')
+: null
 
 async function startBot() {
 
   // ✅ AUTH
-  const { state, saveCreds } = await useMultiFileAuthState('./session')
+  const {
+    state,
+    saveCreds
+  } = await useMultiFileAuthState('./session')
 
-  // ✅ BAILEYS VERSION
-  const { version } = await fetchLatestBaileysVersion()
+  // ✅ VERSION
+  const { version } =
+  await fetchLatestBaileysVersion()
 
   // ✅ SOCKET
   const sock = makeWASocket({
+
     version,
 
     logger: P({
       level: 'silent'
     }),
 
-    browser: ['Ubuntu', 'Chrome', '20.0.04'],
+    browser: [
+      'TESSIA',
+      'Chrome',
+      '1.0.0'
+    ],
 
     printQRInTerminal: false,
 
@@ -55,174 +70,336 @@ async function startBot() {
       )
     },
 
-    markOnlineOnConnect: false,
+    markOnlineOnConnect: true,
+
+    syncFullHistory: true,
 
     generateHighQualityLinkPreview: true,
-
-    syncFullHistory: false,
 
     defaultQueryTimeoutMs: 60000,
 
     connectTimeoutMs: 60000,
 
-    keepAliveIntervalMs: 10000,
-
-    emitOwnEvents: false,
-
-    fireInitQueries: true
+    keepAliveIntervalMs: 10000
   })
 
   // ✅ LOAD COMMANDS
   await loadCommands()
 
-  // ✅ CONNECTION EVENTS
-  sock.ev.on('connection.update', async ({
-    connection,
-    lastDisconnect
-  }) => {
+  // ✅ SAVE SESSION
+  sock.ev.on(
+    'creds.update',
+    saveCreds
+  )
 
-    try {
+  // ✅ CONNECTION
+  sock.ev.on(
+    'connection.update',
+    async ({
+      connection,
+      lastDisconnect
+    }) => {
 
-      // 🔄 CONNECTING
-      if (connection === 'connecting') {
+      try {
 
-        console.log('⏳ Connexion...')
+        // ✅ CONNECTING
+        if (
+          connection === 'connecting'
+        ) {
 
-        // ✅ PAIRING
-        if (!sock.authState.creds.registered && !pairingDone) {
+          console.log(
+            '⏳ Connexion...'
+          )
 
-          pairingDone = true
+          // ✅ PAIR CODE
+          if (
+            !sock.authState.creds.registered
+            &&
+            !pairingDone
+          ) {
 
-          setTimeout(async () => {
+            pairingDone = true
 
-            try {
+            setTimeout(async () => {
 
-              const code = await sock.requestPairingCode(PHONE)
+              try {
 
-              console.log(`
+                const code =
+                await sock.requestPairingCode(
+                  PHONE
+                )
+
+                console.log(`
 ╭━━━〔 TESSIA PAIRING 〕━━━⬣
 ┃ NUMBER : ${PHONE}
 ┃ CODE   : ${code}
 ╰━━━━━━━━━━━━━━━━━━⬣
 `)
 
-            } catch (e) {
+              } catch (e) {
 
-              console.log('❌ Pair Error:', e.message)
+                console.log(
+                  '❌ Pair Error:',
+                  e.message
+                )
 
-              pairingDone = false
-            }
+                pairingDone = false
+              }
 
-          }, 12000)
+            }, 5000)
+          }
         }
-      }
 
-      // ✅ CONNECTED
-      if (connection === 'open') {
+        // ✅ CONNECTED
+        if (
+          connection === 'open'
+        ) {
 
-        pairingDone = true
+          console.log(
+            '✅ TESSIA CONNECTÉ'
+          )
 
-        console.log('✅ TESSIA CONNECTÉ')
+          try {
 
-        try {
+            await sock.sendMessage(
+              PHONE + '@s.whatsapp.net',
+              {
+                image: thumb,
 
-          const owner = config.owner + '@s.whatsapp.net'
+                caption:
+`╭━━〔 TESSIA ONLINE 〕━━⬣
 
-          // ✅ SEND CONNECT MESSAGE
-          await sock.sendMessage(owner, {
-            image: thumb,
-            caption: '✅ TESSIA CONNECTÉ AVEC SUCCÈS'
-          })
+┃ ✅ BOT CONNECTÉ
+┃ 🚀 SESSION ACTIVE
+┃ ⚡ TESSIA PRO MAX
 
-        } catch (e) {
+╰━━━━━━━━━━━━⬣`
+              }
+            )
 
-          console.log('❌ Owner Message Error:', e.message)
+          } catch (e) {
 
+            console.log(
+              '❌ Owner Msg:',
+              e.message
+            )
+          }
         }
-      }
 
-      // ❌ DISCONNECTED
-      if (connection === 'close') {
+        // ❌ CLOSE
+        if (
+          connection === 'close'
+        ) {
 
-        const reason =
-          lastDisconnect?.error?.output?.statusCode
+          const reason =
+          lastDisconnect?.error
+          ?.output?.statusCode
 
-        console.log('❌ Déconnecté:', reason)
+          console.log(
+            '❌ Déconnecté:',
+            reason
+          )
 
-        if (reason !== DisconnectReason.loggedOut) {
+          pairingDone = false
 
-          console.log('🔄 Reconnexion...')
+          // ✅ RECONNECT
+          if (
+            reason !==
+            DisconnectReason.loggedOut
+          ) {
 
-          setTimeout(startBot, 5000)
+            console.log(
+              '🔄 Reconnexion...'
+            )
 
-        } else {
+            setTimeout(() => {
+              startBot()
+            }, 5000)
 
-          console.log('🚫 Session invalide')
+          } else {
 
+            console.log(
+              '🚫 Session supprimée'
+            )
+          }
         }
+
+      } catch (e) {
+
+        console.log(
+          '❌ Connection Error:',
+          e.message
+        )
       }
-
-    } catch (e) {
-
-      console.log('❌ Connection Error:', e.message)
-
     }
-  })
+  )
 
-  // ✅ SAVE CREDS
-  sock.ev.on('creds.update', saveCreds)
+  // ✅ WELCOME / GOODBYE
+  sock.ev.on(
+    'group-participants.update',
+    async (data) => {
+
+      try {
+
+        const metadata =
+        await sock.groupMetadata(
+          data.id
+        )
+
+        const groupName =
+        metadata.subject
+
+        for (
+          const user
+          of data.participants
+        ) {
+
+          let pp =
+'https://i.imgur.com/JPw4L1x.jpeg'
+
+          try {
+
+            pp =
+            await sock.profilePictureUrl(
+              user,
+              'image'
+            )
+
+          } catch {}
+
+          const username =
+          user.split('@')[0]
+
+          const ram =
+Math.round(
+(
+(os.totalmem() - os.freemem())
+/
+1024
+/
+1024
+/
+1024
+) * 100
+) / 100
+
+          // ✅ WELCOME
+          if (
+            data.action === 'add'
+          ) {
+
+            await sock.sendMessage(
+              data.id,
+              {
+                image: { url: pp },
+
+                caption:
+`╭━━━〔 TESSIA WELCOME 〕━━━⬣
+
+┃ 👋 Bienvenue @${username}
+┃ 🏠 Groupe : ${groupName}
+
+┃ 💻 Host : Katabump
+┃ ⚡ RAM : ${ram} GB
+
+┃ 🚀 TESSIA PRO MAX
+
+╰━━━━━━━━━━━━━━━━⬣`,
+
+                mentions: [user]
+              }
+            )
+          }
+
+          // ✅ GOODBYE
+          if (
+            data.action === 'remove'
+          ) {
+
+            await sock.sendMessage(
+              data.id,
+              {
+                image: { url: pp },
+
+                caption:
+`╭━━━〔 TESSIA GOODBYE 〕━━━⬣
+
+┃ 👋 Au revoir @${username}
+┃ 🏠 Groupe : ${groupName}
+
+┃ ⚡ Merci pour ta présence
+
+╰━━━━━━━━━━━━━━━━⬣`,
+
+                mentions: [user]
+              }
+            )
+          }
+        }
+
+      } catch (e) {
+
+        console.log(
+          'WELCOME ERROR:',
+          e.message
+        )
+      }
+    }
+  )
 
   // ✅ MESSAGE HANDLER
-  sock.ev.on('messages.upsert', async ({
-    messages
-  }) => {
+  sock.ev.on(
+    'messages.upsert',
+    async ({ messages }) => {
 
-    try {
+      try {
 
-      const m = messages[0]
+        const m = messages[0]
 
-      if (!m) return
-      if (!m.message) return
-      if (m.key.fromMe) return
+        if (!m) return
+        if (!m.message) return
 
-      // ✅ UNIVERSAL PARSER
-      const body =
-        m.message?.conversation ||
-        m.message?.extendedTextMessage?.text ||
-        m.message?.imageMessage?.caption ||
-        m.message?.videoMessage?.caption ||
-        m.message?.buttonsResponseMessage?.selectedButtonId ||
-        m.message?.listResponseMessage?.singleSelectReply?.selectedRowId ||
-        ''
+        // ✅ BODY
+        const body =
+          m.message?.conversation ||
+          m.message?.extendedTextMessage?.text ||
+          m.message?.imageMessage?.caption ||
+          m.message?.videoMessage?.caption ||
+          ''
 
-      // ✅ IGNORE EMPTY
-      if (!body) return
+        if (!body) return
 
-      // ✅ DEBUG
-      console.log('📩 MESSAGE:', body)
+        // ✅ DEBUG
+        console.log(
+          '📩 MESSAGE:',
+          body
+        )
 
-      // ✅ DATABASE
-      const db = loadDB()
+        // ✅ DATABASE
+        const db = loadDB()
 
-      // ✅ EXECUTE COMMANDS
-      await handleCommand(
-        sock,
-        m,
-        body,
-        db,
-        {
-          thumb,
-          menuVideo
-        }
-      )
+        // ✅ COMMANDS
+        await handleCommand(
+          sock,
+          m,
+          body,
+          db,
+          {
+            thumb,
+            menuVideo
+          }
+        )
 
-    } catch (e) {
+      } catch (e) {
 
-      console.log('❌ Message Error:', e.message)
-
+        console.log(
+          '❌ Message Error:',
+          e.message
+        )
+      }
     }
-  })
+  )
 }
 
-// ✅ START BOT
+// ✅ START
 startBot()
