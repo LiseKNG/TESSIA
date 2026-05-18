@@ -23,7 +23,7 @@ export async function execute({
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA PREFIX 〕━━⬣
+`╭━━〔 CRIMSON BOT PREFIX 〕━━⬣
 ┃ ⚠️ Exemple:
 ┃ .setprefix !
 ╰━━━━━━━━━━━━⬣`
@@ -53,7 +53,7 @@ export async function execute({
       m.key.remoteJid,
       {
         text:
-`╭━━〔 TESSIA PREFIX 〕━━⬣
+`╭━━〔 CRIMSON BOT PREFIX 〕━━⬣
 
 ┃ ✅ Nouveau prefix :
 ┃ ${prefix}
