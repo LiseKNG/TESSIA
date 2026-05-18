@@ -1,5 +1,7 @@
 // commands/play.js
 
+import { reply } from '../lib/reply.js'
+
 export const name = 'play'
 
 export async function execute({ sock, m, args }) {
@@ -14,7 +16,7 @@ export async function execute({ sock, m, args }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA PLAY 〕━━⬣
+`╭━━〔 CRIMSON BOT PLAY 〕━━⬣
 ┃ ⚠️ Donne un son
 ┃ Exemple:
 ┃ .play alan walker
@@ -32,13 +34,13 @@ export async function execute({ sock, m, args }) {
         },
 
         caption:
-`╭━━〔 TESSIA PLAY 〕━━⬣
+`╭━━〔 CRIMSON BOT PLAY 〕━━⬣
 
 ┃ 🎵 Recherche:
 ┃ ${query}
 
 ┃ ⏳ Téléchargement...
-┃ ⚡ Powered By TESSIA
+┃ ⚡ Powered By CRIMSON
 
 ╰━━━━━━━━━━━━⬣`
       },
