@@ -1,3 +1,5 @@
+import { reply } from '../lib/reply.js'
+
 export const name = 'alive'
 
 export async function execute({ sock, m, cache }) {
