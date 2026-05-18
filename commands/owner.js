@@ -1,5 +1,7 @@
 // commands/owner.js
 
+import { reply } from '../lib/reply.js'
+
 import { config } from '../config.js'
 
 export const name = 'owner'
