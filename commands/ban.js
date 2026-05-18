@@ -29,7 +29,7 @@ export async function execute({ sock, m }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA BAN 〕━━⬣
+`╭━━〔 CRIMSON BAN 〕━━⬣
 ┃ ⚠️ Mentionne un membre
 ┃ Exemple:
 ┃ .ban @user
@@ -57,12 +57,12 @@ export async function execute({ sock, m }) {
         },
 
         caption:
-`╭━━〔 TESSIA BAN 〕━━⬣
+`╭━━〔 CRIMSON BAN 〕━━⬣
 
 ┃ 🚫 Utilisateur banni
 ┃ 👤 @${user.split('@')[0]}
 
-┃ ⚡ Powered By TESSIA
+┃ ⚡ Powered By CRIMSON
 
 ╰━━━━━━━━━━━━⬣`,
 
