@@ -27,7 +27,7 @@ export async function execute({
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA GPP 〕━━⬣
+`╭━━〔 CRIMSON GPP 〕━━⬣
 ┃ ⚠️ Répond à une image
 ╰━━━━━━━━━━━━⬣`
         },
@@ -49,7 +49,7 @@ export async function execute({
       m.key.remoteJid,
       {
         text:
-`╭━━〔 TESSIA GPP 〕━━⬣
+`╭━━〔 CRIMSON GPP 〕━━⬣
 ┃ ✅ Photo du groupe modifiée
 ╰━━━━━━━━━━━━⬣`
       },
