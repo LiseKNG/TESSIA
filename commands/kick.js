@@ -1,5 +1,7 @@
 // commands/kick.js
 
+import { reply } from '../lib/reply.js'
+
 export const name = 'kick'
 
 export async function execute({ sock, m }) {
@@ -13,7 +15,7 @@ export async function execute({ sock, m }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA KICK 〕━━⬣
+`╭━━〔 CRIMSON BOT KICK 〕━━⬣
 ┃ ❌ Groupe uniquement
 ╰━━━━━━━━━━━━⬣`
         },
@@ -33,7 +35,7 @@ export async function execute({ sock, m }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA KICK 〕━━⬣
+`╭━━〔 CRIMSON BOT KICK 〕━━⬣
 ┃ ⚠️ Mentionne un membre
 ┃ Exemple:
 ┃ .kick @user
@@ -59,13 +61,13 @@ export async function execute({ sock, m }) {
         },
 
         caption:
-`╭━━〔 TESSIA KICK 〕━━⬣
+`╭━━〔 CRIMSON BOT KICK 〕━━⬣
 
 ┃ 👢 Membre expulsé
 ┃ 👤 @${user.split('@')[0]}
 
 ┃ ⚡ Action effectuée
-┃ ⚡ Powered By TESSIA
+┃ ⚡ Powered By CRIMSON
 
 ╰━━━━━━━━━━━━⬣`,
 
@@ -82,7 +84,7 @@ export async function execute({ sock, m }) {
       m.key.remoteJid,
       {
         text:
-`╭━━〔 TESSIA ERROR 〕━━⬣
+`╭━━〔 CRIMSON BOT ERROR 〕━━⬣
 ┃ ❌ Erreur kick
 ╰━━━━━━━━━━━━⬣`
       },
