@@ -6,21 +6,45 @@ export const name = 'goodbye'
 
 const path = './database.json'
 
+// ✅ LOAD DATABASE
 function loadDB() {
-  return JSON.parse(fs.readFileSync(path))
+
+  if (!fs.existsSync(path)) {
+
+    fs.writeFileSync(
+      path,
+      JSON.stringify({}, null, 2)
+    )
+  }
+
+  return JSON.parse(
+    fs.readFileSync(path)
+  )
 }
 
+// ✅ SAVE DATABASE
 function saveDB(data) {
-  fs.writeFileSync(path, JSON.stringify(data, null, 2))
+
+  fs.writeFileSync(
+    path,
+    JSON.stringify(data, null, 2)
+  )
 }
 
-export async function execute({ sock, m, args }) {
+export async function execute({
+  sock,
+  m,
+  args
+}) {
 
   try {
 
-    if (!m.key.remoteJid.endsWith('@g.us')) {
+    // ✅ GROUP ONLY
+    if (
+      !m.key.remoteJid.endsWith('@g.us')
+    ) {
 
-      return sock.sendMessage(
+      return await sock.sendMessage(
         m.key.remoteJid,
         {
           text:
@@ -32,22 +56,29 @@ export async function execute({ sock, m, args }) {
       )
     }
 
+    // ✅ DATABASE
     const db = loadDB()
 
+    // ✅ CREATE ARRAY
     if (!db.goodbye)
       db.goodbye = []
 
     const group =
       m.key.remoteJid
 
+    // ✅ ON
     if (args[0] === 'on') {
 
-      if (!db.goodbye.includes(group))
+      if (
+        !db.goodbye.includes(group)
+      ) {
+
         db.goodbye.push(group)
+      }
 
       saveDB(db)
 
-      return sock.sendMessage(
+      return await sock.sendMessage(
         group,
         {
           image: {
@@ -59,7 +90,7 @@ export async function execute({ sock, m, args }) {
 
 ┃ ✅ Goodbye activé
 ┃ 👋 Les départs seront
-┃ maintenant annoncés.
+┃ maintenant annoncés
 
 ┃ ⚡ Powered By TESSIA
 
@@ -69,6 +100,7 @@ export async function execute({ sock, m, args }) {
       )
     }
 
+    // ✅ OFF
     if (args[0] === 'off') {
 
       db.goodbye =
@@ -78,7 +110,7 @@ export async function execute({ sock, m, args }) {
 
       saveDB(db)
 
-      return sock.sendMessage(
+      return await sock.sendMessage(
         group,
         {
           image: {
@@ -98,8 +130,38 @@ export async function execute({ sock, m, args }) {
       )
     }
 
+    // ✅ HELP
+    return await sock.sendMessage(
+      group,
+      {
+        text:
+`╭━━〔 TESSIA GOODBYE 〕━━⬣
+
+┃ ⚠️ Utilisation :
+┃ .goodbye on
+┃ .goodbye off
+
+╰━━━━━━━━━━━━⬣`
+      },
+      { quoted: m }
+    )
+
   } catch (e) {
 
-    console.log(e)
+    console.log(
+      'GOODBYE ERROR:',
+      e
+    )
+
+    await sock.sendMessage(
+      m.key.remoteJid,
+      {
+        text:
+`╭━━〔 TESSIA ERROR 〕━━⬣
+┃ ❌ Erreur goodbye
+╰━━━━━━━━━━━━⬣`
+      },
+      { quoted: m }
+    )
   }
 }
