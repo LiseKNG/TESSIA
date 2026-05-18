@@ -24,7 +24,7 @@ export async function execute({ sock, m, args }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA WELCOME 〕━━⬣
+`╭━━〔 CRIMSON BOT WELCOME 〕━━⬣
 ┃ ❌ Groupe uniquement
 ╰━━━━━━━━━━━━⬣`
         },
@@ -55,13 +55,13 @@ export async function execute({ sock, m, args }) {
           },
 
           caption:
-`╭━━〔 TESSIA WELCOME 〕━━⬣
+`╭━━〔 CRIMSON BOT WELCOME 〕━━⬣
 
 ┃ ✅ Welcome activé
 ┃ 👋 Les nouveaux membres
 ┃ recevront un message.
 
-┃ ⚡ Powered By TESSIA
+┃ ⚡ Powered By CRIMSON
 
 ╰━━━━━━━━━━━━⬣`
         },
@@ -86,11 +86,11 @@ export async function execute({ sock, m, args }) {
           },
 
           caption:
-`╭━━〔 TESSIA WELCOME 〕━━⬣
+`╭━━〔 CRIMSON BOT WELCOME 〕━━⬣
 
 ┃ ❌ Welcome désactivé
 
-┃ ⚡ Powered By TESSIA
+┃ ⚡ Powered By CRIMSON
 
 ╰━━━━━━━━━━━━⬣`
         },
