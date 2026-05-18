@@ -54,7 +54,7 @@ async function startBot() {
     }),
 
     browser: [
-      'TESSIA',
+      'CIMSON',
       'Chrome',
       '1.0.0'
     ],
@@ -130,7 +130,7 @@ async function startBot() {
                 )
 
                 console.log(`
-╭━━━〔 TESSIA PAIRING 〕━━━⬣
+╭━━━〔 CRIMSON BOT PAIRING 〕━━━⬣
 ┃ NUMBER : ${PHONE}
 ┃ CODE   : ${code}
 ╰━━━━━━━━━━━━━━━━━━⬣
@@ -156,7 +156,7 @@ async function startBot() {
         ) {
 
           console.log(
-            '✅ TESSIA CONNECTÉ'
+            '✅ CRIMSON BOT CONNECTÉ'
           )
 
           try {
@@ -167,11 +167,11 @@ async function startBot() {
                 image: thumb,
 
                 caption:
-`╭━━〔 TESSIA ONLINE 〕━━⬣
+`╭━━〔 CRIMSON BOT ONLINE 〕━━⬣
 
 ┃ ✅ BOT CONNECTÉ
 ┃ 🚀 SESSION ACTIVE
-┃ ⚡ TESSIA PRO MAX
+┃ ⚡ CRIMSON BOT UPD2
 
 ╰━━━━━━━━━━━━⬣`
               }
@@ -294,7 +294,7 @@ Math.round(
                 image: { url: pp },
 
                 caption:
-`╭━━━〔 TESSIA WELCOME 〕━━━⬣
+`╭━━━〔 CRIMSON BOT WELCOME 〕━━━⬣
 
 ┃ 👋 Bienvenue @${username}
 ┃ 🏠 Groupe : ${groupName}
@@ -302,7 +302,7 @@ Math.round(
 ┃ 💻 Host : Katabump
 ┃ ⚡ RAM : ${ram} GB
 
-┃ 🚀 TESSIA PRO MAX
+┃ 🚀 CRIMSON BOT UPD2
 
 ╰━━━━━━━━━━━━━━━━⬣`,
 
@@ -322,7 +322,7 @@ Math.round(
                 image: { url: pp },
 
                 caption:
-`╭━━━〔 TESSIA GOODBYE 〕━━━⬣
+`╭━━━〔 CRIMSON BOT GOODBYE 〕━━━⬣
 
 ┃ 👋 Au revoir @${username}
 ┃ 🏠 Groupe : ${groupName}
