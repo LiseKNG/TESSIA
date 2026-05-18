@@ -1,5 +1,7 @@
 // commands/promote.js
 
+import { reply } from '../lib/reply.js'
+
 export const name = 'promote'
 
 export async function execute({ sock, m }) {
@@ -13,7 +15,7 @@ export async function execute({ sock, m }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA ADMIN 〕━━⬣
+`╭━━〔 CRIMSON BO ADMIN 〕━━⬣
 ┃ ❌ Groupe uniquement
 ╰━━━━━━━━━━━━⬣`
         },
@@ -33,7 +35,7 @@ export async function execute({ sock, m }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA PROMOTE 〕━━⬣
+`╭━━〔 CRIMSON BOT PROMOTE 〕━━⬣
 ┃ ⚠️ Mentionne un membre
 ┃ Exemple:
 ┃ .promote @user
@@ -59,13 +61,13 @@ export async function execute({ sock, m }) {
         },
 
         caption:
-`╭━━〔 TESSIA PROMOTE 〕━━⬣
+`╭━━〔 CRIMSON BOT PROMOTE 〕━━⬣
 
 ┃ 👑 Nouveau Administrateur
 ┃ 👤 @${user.split('@')[0]}
 
 ┃ ✅ Promotion effectuée
-┃ ⚡ Powered By TESSIA
+┃ ⚡ Powered By CRIMSON
 
 ╰━━━━━━━━━━━━⬣`,
 
@@ -82,7 +84,7 @@ export async function execute({ sock, m }) {
       m.key.remoteJid,
       {
         text:
-`╭━━〔 TESSIA ERROR 〕━━⬣
+`╭━━〔 CRIMSON BOT ERROR 〕━━⬣
 ┃ ❌ Erreur promote
 ╰━━━━━━━━━━━━⬣`
       },
