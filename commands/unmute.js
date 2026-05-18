@@ -1,5 +1,7 @@
 // commands/unmute.js
 
+import { reply } from '../lib/reply.js'
+
 export const name = 'unmute'
 
 export async function execute({ sock, m }) {
@@ -13,7 +15,7 @@ export async function execute({ sock, m }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA GROUP 〕━━⬣
+`╭━━〔 CRIMSON BOT GROUP 〕━━⬣
 ┃ ❌ Groupe uniquement
 ╰━━━━━━━━━━━━⬣`
         },
@@ -36,13 +38,13 @@ export async function execute({ sock, m }) {
         },
 
         caption:
-`╭━━〔 TESSIA UNMUTE 〕━━⬣
+`╭━━〔 CRIMSON BOT UNMUTE 〕━━⬣
 
 ┃ 🔊 GROUPE OUVERT
 ┃ ✅ Tous les membres
 ┃ peuvent maintenant écrire.
 
-┃ ⚡ Powered By TESSIA
+┃ ⚡ Powered By CRIMSON
 ╰━━━━━━━━━━━━⬣`
       },
       { quoted: m }
@@ -56,7 +58,7 @@ export async function execute({ sock, m }) {
       m.key.remoteJid,
       {
         text:
-`╭━━〔 TESSIA ERROR 〕━━⬣
+`╭━━〔 CRIMSON BOT ERROR 〕━━⬣
 ┃ ❌ Erreur unmute
 ╰━━━━━━━━━━━━⬣`
       },
