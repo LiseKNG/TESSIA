@@ -1,5 +1,7 @@
 // commands/menu.js
 
+import { reply } from '../lib/reply.js'
+
 import os from 'os'
 
 export const name = 'menu'
