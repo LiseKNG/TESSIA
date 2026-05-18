@@ -1,5 +1,11 @@
 export const config = {
+
+  owner: '237699239593',
+
+  botname: 'TESSIA',
+
   prefix: '.',
-  owner: '237698303919',
-  botName: 'TESSIA'
+
+  channel:
+'https://whatsapp.com/channel/TON-LIEN-ICI'
 }
