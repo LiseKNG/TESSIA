@@ -1,5 +1,7 @@
 // commands/vv.js
 
+import { reply } from '../lib/reply.js'
+
 export const name = 'vv'
 
 export async function execute({ sock, m }) {
@@ -17,7 +19,7 @@ export async function execute({ sock, m }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA VV 〕━━⬣
+`╭━━〔 CRIMSON BOT VV 〕━━⬣
 ┃ ⚠️ Répond à une vue unique
 ╰━━━━━━━━━━━━⬣`
         },
@@ -44,7 +46,7 @@ export async function execute({ sock, m }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA VV 〕━━⬣
+`╭━━〔 CRIMSON BOT VV 〕━━⬣
 ┃ ❌ Ceci n'est pas une vue unique
 ╰━━━━━━━━━━━━⬣`
         },
@@ -69,7 +71,7 @@ export async function execute({ sock, m }) {
           },
 
           caption:
-`╭━━〔 TESSIA VV 〕━━⬣
+`╭━━〔 CRIMSON BOT VV 〕━━⬣
 ┃ 🖼️ Image récupérée
 ╰━━━━━━━━━━━━⬣`
         },
@@ -94,7 +96,7 @@ export async function execute({ sock, m }) {
           },
 
           caption:
-`╭━━〔 TESSIA VV 〕━━⬣
+`╭━━〔 CRIMSON BOT VV 〕━━⬣
 ┃ 🎥 Vidéo récupérée
 ╰━━━━━━━━━━━━⬣`
         },
@@ -113,7 +115,7 @@ export async function execute({ sock, m }) {
       m.key.remoteJid,
       {
         text:
-`╭━━〔 TESSIA ERROR 〕━━⬣
+`╭━━〔 CRIMSON BOT ERROR 〕━━⬣
 ┃ ❌ Erreur VV
 ╰━━━━━━━━━━━━⬣`
       },
