@@ -15,7 +15,7 @@ export async function execute({ sock, m }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA KICKALL 〕━━⬣
+`╭━━〔 CRIMSON BOT KICKALL 〕━━⬣
 ┃ ❌ Groupe uniquement
 ╰━━━━━━━━━━━━⬣`
         },
@@ -38,13 +38,13 @@ export async function execute({ sock, m }) {
         },
 
         caption:
-`╭━━〔 TESSIA KICKALL 〕━━⬣
+`╭━━〔 CRIMSON BOT KICKALL 〕━━⬣
 
 ┃ ⚠️ Suppression massive
 ┃ 🚫 Tous les membres
 ┃ seront expulsés.
 
-┃ ⚡ Powered By TESSIA
+┃ ⚡ Powered By CRIMSON
 
 ╰━━━━━━━━━━━━⬣`
       },
@@ -82,7 +82,7 @@ export async function execute({ sock, m }) {
       m.key.remoteJid,
       {
         text:
-`╭━━〔 TESSIA DONE 〕━━⬣
+`╭━━〔 CRIMSON BOT DONE 〕━━⬣
 ┃ ✅ Kickall terminé
 ╰━━━━━━━━━━━━⬣`
       },
@@ -97,7 +97,7 @@ export async function execute({ sock, m }) {
       m.key.remoteJid,
       {
         text:
-`╭━━〔 TESSIA ERROR 〕━━⬣
+`╭━━〔 CRIMSON BOT ERROR 〕━━⬣
 ┃ ❌ Erreur kickall
 ╰━━━━━━━━━━━━⬣`
       },
