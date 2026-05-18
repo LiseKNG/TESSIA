@@ -26,7 +26,7 @@ export async function execute({
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA GDESC 〕━━⬣
+`╭━━〔 CRIMSON GDESC 〕━━⬣
 ┃ ⚠️ Donne une description
 ╰━━━━━━━━━━━━⬣`
         },
@@ -43,7 +43,7 @@ export async function execute({
       m.key.remoteJid,
       {
         text:
-`╭━━〔 TESSIA GDESC 〕━━⬣
+`╭━━〔 CRIMSON GDESC 〕━━⬣
 
 ┃ ✅ Description modifiée
 
