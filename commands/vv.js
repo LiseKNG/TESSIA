@@ -1,7 +1,5 @@
 // commands/vv.js
 
-import { reply } from '../lib/reply.js'
-
 export const name = 'vv'
 
 export async function execute({ sock, m }) {
