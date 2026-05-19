@@ -48,7 +48,7 @@ export async function execute({
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA GOODBYE 〕━━⬣
+`╭━━〔 CRIMSON BOT GOODBYE 〕━━⬣
 ┃ ❌ Groupe uniquement
 ╰━━━━━━━━━━━━⬣`
         },
@@ -86,13 +86,13 @@ export async function execute({
           },
 
           caption:
-`╭━━〔 TESSIA GOODBYE 〕━━⬣
+`╭━━〔 CRIMSON BOT GOODBYE 〕━━⬣
 
 ┃ ✅ Goodbye activé
 ┃ 👋 Les départs seront
 ┃ maintenant annoncés
 
-┃ ⚡ Powered By TESSIA
+┃ ⚡ Powered By CRIMSON
 
 ╰━━━━━━━━━━━━⬣`
         },
@@ -118,11 +118,11 @@ export async function execute({
           },
 
           caption:
-`╭━━〔 TESSIA GOODBYE 〕━━⬣
+`╭━━〔 CRIMSON BOT GOODBYE 〕━━⬣
 
 ┃ ❌ Goodbye désactivé
 
-┃ ⚡ Powered By TESSIA
+┃ ⚡ Powered By CRIMSON
 
 ╰━━━━━━━━━━━━⬣`
         },
@@ -135,7 +135,7 @@ export async function execute({
       group,
       {
         text:
-`╭━━〔 TESSIA GOODBYE 〕━━⬣
+`╭━━〔 CRIMDON BOT GOODBYE 〕━━⬣
 
 ┃ ⚠️ Utilisation :
 ┃ .goodbye on
@@ -157,7 +157,7 @@ export async function execute({
       m.key.remoteJid,
       {
         text:
-`╭━━〔 TESSIA ERROR 〕━━⬣
+`╭━━〔 CRIMSON BOT ERROR 〕━━⬣
 ┃ ❌ Erreur goodbye
 ╰━━━━━━━━━━━━⬣`
       },
