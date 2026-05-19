@@ -13,7 +13,7 @@ export async function execute({ sock, m }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA ADMIN 〕━━⬣
+`╭━━〔 CRIMSON BOT ADMIN 〕━━⬣
 ┃ ❌ Groupe uniquement
 ╰━━━━━━━━━━━━⬣`
         },
@@ -33,7 +33,7 @@ export async function execute({ sock, m }) {
         m.key.remoteJid,
         {
           text:
-`╭━━〔 TESSIA DEMOTE 〕━━⬣
+`╭━━〔 CRIMSON BOT DEMOTE 〕━━⬣
 ┃ ⚠️ Mentionne un admin
 ┃ Exemple:
 ┃ .demote @user
@@ -59,13 +59,13 @@ export async function execute({ sock, m }) {
         },
 
         caption:
-`╭━━〔 TESSIA DEMOTE 〕━━⬣
+`╭━━〔 CRIMSON BOT DEMOTE 〕━━⬣
 
 ┃ ❌ Administrateur retiré
 ┃ 👤 @${user.split('@')[0]}
 
 ┃ ⚡ Rétrogradation effectuée
-┃ ⚡ Powered By TESSIA
+┃ ⚡ Powered By CRIMSON
 
 ╰━━━━━━━━━━━━⬣`,
 
@@ -82,7 +82,7 @@ export async function execute({ sock, m }) {
       m.key.remoteJid,
       {
         text:
-`╭━━〔 TESSIA ERROR 〕━━⬣
+`╭━━〔 CRIMSON BOT ERROR 〕━━⬣
 ┃ ❌ Erreur demote
 ╰━━━━━━━━━━━━⬣`
       },
