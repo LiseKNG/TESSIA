@@ -7,5 +7,5 @@ export const config = {
   prefix: '.',
 
   channel:
-'https://whatsapp.com/channel/TON-LIEN-ICI'
+'https://whatsapp.com/channel/0029Vb878xH2f3ERdI0luo0s'
 }
