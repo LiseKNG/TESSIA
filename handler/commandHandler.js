@@ -147,6 +147,29 @@ export async function handleCommand(
       return
     }
 
+const sender = (
+
+  m.key.participant ||
+
+  m.key.remoteJid ||
+
+  ''
+
+)
+.split('@')[0]
+.split(':')[0]
+.replace(/[^0-9]/g, '')
+
+    // ✅ PRIVATE MODE
+if (
+  db.private === true &&
+  sender !==
+  config.owner.replace(/[^0-9]/g, '')
+) {
+
+  return
+}
+    
     // ✅ EXECUTE
     await cmd.execute({
 
