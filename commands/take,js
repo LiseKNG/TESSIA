@@ -1,0 +1,99 @@
+// commands/take.js
+
+import {
+  downloadContentFromMessage
+} from '@whiskeysockets/baileys'
+
+export const name = 'take'
+
+async function getBuffer(stream) {
+
+  let buffer = Buffer.from([])
+
+  for await (const chunk of stream) {
+
+    buffer = Buffer.concat([
+      buffer,
+      chunk
+    ])
+  }
+
+  return buffer
+}
+
+export async function execute({
+  sock,
+  m,
+  args
+}) {
+
+  try {
+
+    const jid =
+    m.key.remoteJid
+
+    const quoted =
+    m.message?.extendedTextMessage
+    ?.contextInfo
+
+    if (
+      !quoted?.quotedMessage
+      ?.stickerMessage
+    ) {
+
+      return await sock.sendMessage(
+        jid,
+        {
+          text:
+`╭━━〔 CRIMSON TAKE 〕━━⬣
+
+┃ ❌ Réponds à un sticker
+
+╰━━━━━━━━━━━━⬣`
+        },
+        {
+          quoted: m
+        }
+      )
+    }
+
+    const pack =
+    args[0] || 'CRIMSON'
+
+    const author =
+    args.slice(1).join(' ')
+    || 'BOT'
+
+    const stream =
+    await downloadContentFromMessage(
+      quoted.quotedMessage
+      .stickerMessage,
+      'sticker'
+    )
+
+    const buffer =
+    await getBuffer(stream)
+
+    await sock.sendMessage(
+
+      jid,
+
+      {
+        sticker: buffer,
+        packname: pack,
+        author
+      },
+
+      {
+        quoted: m
+      }
+    )
+
+  } catch (e) {
+
+    console.log(
+      'TAKE ERROR:',
+      e.message
+    )
+  }
+}
