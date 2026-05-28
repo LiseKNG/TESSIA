@@ -1,283 +1,453 @@
-import fs from 'fs'
+// commands/control.js
 
 export const name = 'control'
-
-const path = './database.json'
-
-// ✅ LOAD DB
-function loadDB() {
-
-  if (!fs.existsSync(path)) {
-
-    fs.writeFileSync(
-      path,
-      JSON.stringify({}, null, 2)
-    )
-  }
-
-  return JSON.parse(
-    fs.readFileSync(path)
-  )
-}
-
-// ✅ SAVE DB
-function saveDB(data) {
-
-  fs.writeFileSync(
-    path,
-    JSON.stringify(data, null, 2)
-  )
-}
-
-// ✅ RANDOM CODE
-function generateCode() {
-
-  return Math.floor(
-    100000 + Math.random() * 900000
-  ).toString()
-}
 
 export async function execute({
   sock,
   m,
   args,
-  pushName
+  cache
 }) {
 
   try {
 
-    const group =
-      m.key.remoteJid
+    const jid =
+    m.key.remoteJid
 
     // ✅ GROUP ONLY
-    if (!group.endsWith('@g.us')) {
+    if (
+      !jid.endsWith('@g.us')
+    ) {
 
       return await sock.sendMessage(
-        group,
+        jid,
         {
-          text:
-`╭━━〔 CRIMSON CONTROL 〕━━⬣
-┃ ❌ Groupe uniquement
-╰━━━━━━━━━━━━⬣`
-        },
-        { quoted: m }
-      )
-    }
-
-    const db = loadDB()
-
-    if (!db.control)
-      db.control = {}
-
-    const sender =
-      m.key.participant ||
-      m.key.remoteJid
-
-    // ✅ STEP 1
-    // GENERATE CODE
-    if (!args[0]) {
-
-      const code =
-        generateCode()
-
-      db.control[sender] = {
-        code,
-        group
-      }
-
-      saveDB(db)
-
-      // ✅ SEND PRIVATE CODE
-      await sock.sendMessage(
-        sender,
-        {
-          text:
-`╭━━〔 CRIMSON SECURITY 〕━━⬣
-
-┃ 🔐 CODE : ${code}
-
-┃ ⚠️ Utilise :
-┃ .control ${code}
-
-┃ 🚨 Ce code est privé
-
-╰━━━━━━━━━━━━⬣`
-        }
-      )
-
-      return await sock.sendMessage(
-        group,
-        {
-          text:
-`╭━━〔 CRIMSON CONTROL 〕━━⬣
-
-┃ 🔐 Code envoyé en privé
-┃ 📩 Vérifie WhatsApp
-
-╰━━━━━━━━━━━━⬣`
-        },
-        { quoted: m }
-      )
-    }
-
-    // ✅ STEP 2
-    // VERIFY CODE
-    const saved =
-      db.control[sender]
-
-    if (!saved) {
-
-      return await sock.sendMessage(
-        group,
-        {
-          text:
-`╭━━〔 CRIMSON CONTROL 〕━━⬣
-┃ ❌ Aucun code trouvé
-╰━━━━━━━━━━━━⬣`
-        },
-        { quoted: m }
-      )
-    }
-
-    if (args[0] !== saved.code) {
-
-      return await sock.sendMessage(
-        group,
-        {
-          text:
-`╭━━〔 CRIMSON CONTROL 〕━━⬣
-┃ ❌ Code invalide
-╰━━━━━━━━━━━━⬣`
-        },
-        { quoted: m }
-      )
-    }
-
-    // ✅ DELETE CODE
-    delete db.control[sender]
-
-    saveDB(db)
-
-    // ✅ GROUP SETTINGS
-    try {
-
-      // CHANGE GROUP NAME
-      await sock.groupUpdateSubject(
-        group,
-        `⚡ CONTROLLED BY CRIMSON`
-      )
-
-      // CHANGE GROUP DESC
-      await sock.groupUpdateDescription(
-        group,
-`⚡ Groupe sécurisé par CRIMSON PRO MAX
-
-👑 Owner : ${pushName}
-
-🚀 FULL CONTROL ACTIVATED`
-      )
-
-      // MUTE GROUP
-      await sock.groupSettingUpdate(
-        group,
-        'announcement'
-      )
-
-      // LOCK GROUP SETTINGS
-      await sock.groupSettingUpdate(
-        group,
-        'locked'
-      )
-
-      // CHANGE GROUP PP
-      if (
-        fs.existsSync('./media/thumb.jpg')
-      ) {
-
-        const media =
-          fs.readFileSync(
-            './media/thumb.jpg'
-          )
-
-        await sock.updateProfilePicture(
-          group,
-          media
-        )
-      }
-
-      // ✅ KICK MEMBERS
-      const metadata =
-        await sock.groupMetadata(group)
-
-      const participants =
-        metadata.participants
-
-      for (const p of participants) {
-
-        // DON'T KICK OWNER
-        if (
-          p.id.includes(sock.user.id.split(':')[0])
-        ) continue
-
-        // DON'T KICK COMMAND USER
-        if (p.id === sender)
-          continue
-
-        try {
-
-          await sock.groupParticipantsUpdate(
-            group,
-            [p.id],
-            'remove'
-          )
-
-        } catch {}
-      }
-
-      // ✅ SUCCESS
-      await sock.sendMessage(
-        group,
-        {
-          image: {
-            url: './media/thumb.jpg'
-          },
+          image: cache?.thumb,
 
           caption:
 `╭━━〔 CRIMSON CONTROL 〕━━⬣
 
-┃ ✅ FULL CONTROL ACTIVATED
-
-┃ ⚡ Nom modifié
-┃ ⚡ Description modifiée
-┃ ⚡ Photo changée
-┃ ⚡ Groupe mute
-┃ ⚡ Paramètres verrouillés
-┃ ⚡ Membres expulsés
-
-┃ 👑 By ${pushName}
+┃ ❌ Groupe uniquement
 
 ╰━━━━━━━━━━━━⬣`
+        },
+        {
+          quoted: m
         }
       )
+    }
 
-    } catch (e) {
+    // ✅ ADMIN ONLY
+    const metadata =
+    await sock.groupMetadata(jid)
 
-      console.log(e)
+    const sender =
+    m.key.participant
 
-      await sock.sendMessage(
-        group,
+    const admins =
+    metadata.participants
+    .filter(v => v.admin)
+    .map(v => v.id)
+
+    if (
+      !admins.includes(sender)
+    ) {
+
+      return await sock.sendMessage(
+        jid,
         {
-          text:
+          image: cache?.thumb,
+
+          caption:
 `╭━━〔 CRIMSON CONTROL 〕━━⬣
 
-┃ ❌ Impossible d'obtenir
-┃ le contrôle total
-
-┃ ⚠️ Vérifie que :
-┃ • le bot est admin
-┃ • le bot a tous les droits
+┃ ❌ Admin seulement
 
 ╰━━━━━━━━━━━━⬣`
+        },
+        {
+          quoted: m
+        }
+      )
+    }
+
+    // ✅ MENU
+    if (!args[0]) {
+
+      return await sock.sendMessage(
+
+        jid,
+
+        {
+          image: cache?.thumb,
+
+          caption:
+`╭━━〔 CRIMSON CONTROL PANEL 〕━━⬣
+
+┃ 🎛️ SYSTÈME DE CONTRÔLE
+┃ 👑 ADMIN PANEL
+
+┣━━━━━━━━━━━━⬣
+
+┃ 📝 .control name NOM
+┃ 📝 .control desc TEXTE
+┃ 🔒 .control close
+┃ 🔓 .control open
+┃ 🖼️ .control pp
+┃ 👢 .control kick @user
+┃ ☠️ .control kickall
+┃ 🔇 .control mute
+┃ 🔊 .control unmute
+
+╰━━━━━━━━━━━━⬣`
+        },
+        {
+          quoted: m
+        }
+      )
+    }
+
+    const action =
+    args[0].toLowerCase()
+
+    // ✅ CHANGE NAME
+    if (action === 'name') {
+
+      const newName =
+      args.slice(1).join(' ')
+
+      if (!newName) {
+
+        return sock.sendMessage(
+          jid,
+          {
+            text:
+'❌ Donne un nom'
+          },
+          {
+            quoted: m
+          }
+        )
+      }
+
+      await sock.groupUpdateSubject(
+        jid,
+        newName
+      )
+
+      return sock.sendMessage(
+        jid,
+        {
+          image: cache?.thumb,
+
+          caption:
+`╭━━〔 CRIMSON CONTROL 〕━━⬣
+
+┃ ✅ Nom modifié
+
+┃ 📝 ${newName}
+
+╰━━━━━━━━━━━━⬣`
+        },
+        {
+          quoted: m
+        }
+      )
+    }
+
+    // ✅ CHANGE DESC
+    if (action === 'desc') {
+
+      const newDesc =
+      args.slice(1).join(' ')
+
+      if (!newDesc) {
+
+        return sock.sendMessage(
+          jid,
+          {
+            text:
+'❌ Prochainement vous allez me nommer dans votre groupe personne ne decide suis je admin ou pas, je ne suis pas votre commencement mais je suis votre fin  '
+          },
+          {
+            quoted: m
+          }
+        )
+      }
+
+      await sock.groupUpdateDescription(
+        jid,
+        newDesc
+      )
+
+      return sock.sendMessage(
+        jid,
+        {
+          image: cache?.thumb,
+
+          caption:
+`╭━━〔 CRIMSON CONTROL 〕━━⬣
+
+┃ ✅ Description modifiée
+
+╰━━━━━━━━━━━━⬣`
+        },
+        {
+          quoted: m
+        }
+      )
+    }
+
+    // ✅ CLOSE GROUP
+    if (action === 'close') {
+
+      await sock.groupSettingUpdate(
+        jid,
+        'announcement'
+      )
+
+      return sock.sendMessage(
+        jid,
+        {
+          image: cache?.thumb,
+
+          caption:
+`╭━━〔 CRIMSON CONTROL 〕━━⬣
+
+┃ 🔒 Groupe fermé
+
+╰━━━━━━━━━━━━⬣`
+        },
+        {
+          quoted: m
+        }
+      )
+    }
+
+    // ✅ OPEN GROUP
+    if (action === 'open') {
+
+      await sock.groupSettingUpdate(
+        jid,
+        'not_announcement'
+      )
+
+      return sock.sendMessage(
+        jid,
+        {
+          image: cache?.thumb,
+
+          caption:
+`╭━━〔 CRIMSON CONTROL 〕━━⬣
+
+┃ 🔓 Groupe ouvert
+
+╰━━━━━━━━━━━━⬣`
+        },
+        {
+          quoted: m
+        }
+      )
+    }
+
+    // ✅ GROUP PP
+    if (action === 'pp') {
+
+      const quoted =
+      m.message?.extendedTextMessage
+      ?.contextInfo?.quotedMessage
+
+      if (
+        !quoted?.imageMessage
+      ) {
+
+        return sock.sendMessage(
+          jid,
+          {
+            text:
+'❌ Réponds à une image'
+          },
+          {
+            quoted: m
+          }
+        )
+      }
+
+      const stream =
+      await downloadContentFromMessage(
+        quoted.imageMessage,
+        'image'
+      )
+
+      let buffer =
+      Buffer.from([])
+
+      for await (
+        const chunk
+        of stream
+      ) {
+
+        buffer =
+        Buffer.concat([
+          buffer,
+          chunk
+        ])
+      }
+
+      await sock.updateProfilePicture(
+        jid,
+        buffer
+      )
+
+      return sock.sendMessage(
+        jid,
+        {
+          image: cache?.thumb,
+
+          caption:
+`╭━━〔 CRIMSON CONTROL 〕━━⬣
+
+┃ ✅ Photo modifiée
+
+╰━━━━━━━━━━━━⬣`
+        },
+        {
+          quoted: m
+        }
+      )
+    }
+
+    // ✅ KICK
+    if (action === 'kick') {
+
+      const user =
+      m.message
+      ?.extendedTextMessage
+      ?.contextInfo
+      ?.mentionedJid?.[0]
+
+      if (!user) {
+
+        return sock.sendMessage(
+          jid,
+          {
+            text:
+'❌ Mentionne un membre'
+          },
+          {
+            quoted: m
+          }
+        )
+      }
+
+      await sock.groupParticipantsUpdate(
+        jid,
+        [user],
+        'remove'
+      )
+
+      return sock.sendMessage(
+        jid,
+        {
+          image: cache?.thumb,
+
+          caption:
+`╭━━〔 CRIMSON CONTROL 〕━━⬣
+
+┃ 👢 Membre expulsé
+
+╰━━━━━━━━━━━━⬣`
+        },
+        {
+          quoted: m
+        }
+      )
+    }
+
+    // ✅ KICKALL
+    if (action === 'kickall') {
+
+      const members =
+      metadata.participants
+      .filter(
+        v =>
+        !v.admin
+      )
+      .map(v => v.id)
+
+      await sock.groupParticipantsUpdate(
+        jid,
+        members,
+        'remove'
+      )
+
+      return sock.sendMessage(
+        jid,
+        {
+          image: cache?.thumb,
+
+          caption:
+`╭━━〔 CRIMSON CONTROL 〕━━⬣
+
+┃ ☠️ Tous les membres
+┃ non-admin ont été retirés
+
+╰━━━━━━━━━━━━⬣`
+        },
+        {
+          quoted: m
+        }
+      )
+    }
+
+    // ✅ MUTE
+    if (action === 'mute') {
+
+      await sock.groupSettingUpdate(
+        jid,
+        'announcement'
+      )
+
+      return sock.sendMessage(
+        jid,
+        {
+          image: cache?.thumb,
+
+          caption:
+`╭━━〔 CRIMSON CONTROL 〕━━⬣
+
+┃ 🔇 Groupe mute
+
+╰━━━━━━━━━━━━⬣`
+        },
+        {
+          quoted: m
+        }
+      )
+    }
+
+    // ✅ UNMUTE
+    if (action === 'unmute') {
+
+      await sock.groupSettingUpdate(
+        jid,
+        'not_announcement'
+      )
+
+      return sock.sendMessage(
+        jid,
+        {
+          image: cache?.thumb,
+
+          caption:
+`╭━━〔 CRIMSON CONTROL 〕━━⬣
+
+┃ 🔊 Groupe unmute
+
+╰━━━━━━━━━━━━⬣`
+        },
+        {
+          quoted: m
         }
       )
     }
@@ -286,7 +456,7 @@ export async function execute({
 
     console.log(
       'CONTROL ERROR:',
-      e
+      e.message
     )
   }
 }
