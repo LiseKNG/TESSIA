@@ -86,7 +86,6 @@ export async function handleCommand(
 
   try {
 
-    // ✅ PREFIX
     const prefix =
       config.prefix || '.'
 
@@ -94,7 +93,6 @@ export async function handleCommand(
       !body.startsWith(prefix)
     ) return
 
-    // ✅ PARSE
     const args =
       body
       .slice(prefix.length)
@@ -102,30 +100,42 @@ export async function handleCommand(
       .split(/ +/)
 
     const command =
-      args
-      .shift()
+      args.shift()
       ?.toLowerCase()
 
     if (!command) return
 
-    // ✅ GET COMMAND
     const cmd =
       commands.get(command)
 
     if (!cmd) return
 
-    // ✅ SENDER
-    const sender =
+    // ✅ CLEAN SENDER
+    const sender = (
+
       m.key.participant ||
-      m.key.remoteJid
 
-    // ✅ OWNER
+      m.participant ||
+
+      m.key.remoteJid ||
+
+      ''
+
+    )
+    .split('@')[0]
+    .split(':')[0]
+    .replace(/[^0-9]/g, '')
+
+    // ✅ OWNER NUMBER
+    const ownerNumber =
+      config.owner
+      .replace(/[^0-9]/g, '')
+
+    // ✅ OWNER CHECK
     const isOwner =
-      sender.includes(
-        config.owner
-      )
+      sender === ownerNumber
 
-    // ✅ LOAD DB
+    // ✅ LOAD DATABASE
     const data =
       loadDB()
 
@@ -141,36 +151,14 @@ export async function handleCommand(
     // ✅ BANNED USERS
     if (
       data.ban &&
+      Array.isArray(data.ban) &&
       data.ban.includes(sender)
     ) {
 
       return
     }
 
-const sender = (
-
-  m.key.participant ||
-
-  m.key.remoteJid ||
-
-  ''
-
-)
-.split('@')[0]
-.split(':')[0]
-.replace(/[^0-9]/g, '')
-
-    // ✅ PRIVATE MODE
-if (
-  db.private === true &&
-  sender !==
-  config.owner.replace(/[^0-9]/g, '')
-) {
-
-  return
-}
-    
-    // ✅ EXECUTE
+    // ✅ EXECUTE COMMAND
     await cmd.execute({
 
       sock,
@@ -187,12 +175,12 @@ if (
 
       commands,
 
-      pushName:
-        m.pushName || 'User',
-
       sender,
 
       isOwner,
+
+      pushName:
+        m.pushName || 'User',
 
       thumb:
         cache?.thumb || null,
@@ -205,7 +193,7 @@ if (
 
     console.log(
       '❌ Command Error:',
-      e
+      e.message
     )
   }
 }
