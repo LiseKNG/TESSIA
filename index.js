@@ -235,42 +235,50 @@ async function startBot() {
   )
 
   // ✅ WELCOME / GOODBYE
-  sock.ev.on(
-    'group-participants.update',
-    async (data) => {
+sock.ev.on(
+  'group-participants.update',
+  async (data) => {
 
-      try {
+    try {
 
-        const metadata =
-        await sock.groupMetadata(
-          data.id
-        )
+      const db = loadDB()
 
-        const groupName =
-        metadata.subject
+      if (!db.welcome)
+        db.welcome = []
 
-        for (
-          const user
-          of data.participants
-        ) {
+      if (!db.goodbye)
+        db.goodbye = []
 
-          let pp =
+      const metadata =
+      await sock.groupMetadata(
+        data.id
+      )
+
+      const groupName =
+      metadata.subject
+
+      for (
+        const user
+        of data.participants
+      ) {
+
+        let pp =
 'https://i.imgur.com/JPw4L1x.jpeg'
 
-          try {
+        try {
 
-            pp =
-            await sock.profilePictureUrl(
-              user,
-              'image'
-            )
+          pp =
+          await sock.profilePictureUrl(
+            user,
+            'image'
+          )
 
-          } catch {}
+        } catch {}
 
-          const username =
-          user.split('@')[0]
+        const username =
+        user.split('@')[0]
 
-          const ram =
+        const ram =
 Math.round(
 (
 (os.totalmem() - os.freemem())
@@ -283,17 +291,18 @@ Math.round(
 ) * 100
 ) / 100
 
-          // ✅ WELCOME
-          if (
-            data.action === 'add'
-          ) {
+        // ✅ WELCOME
+        if (
+          data.action === 'add' &&
+          db.welcome.includes(data.id)
+        ) {
 
-            await sock.sendMessage(
-              data.id,
-              {
-                image: { url: pp },
+          await sock.sendMessage(
+            data.id,
+            {
+              image: { url: pp },
 
-                caption:
+              caption:
 `╭━━━〔 CRIMSON BOT WELCOME 〕━━━⬣
 
 ┃ 👋 Bienvenue @${username}
@@ -306,22 +315,23 @@ Math.round(
 
 ╰━━━━━━━━━━━━━━━━⬣`,
 
-                mentions: [user]
-              }
-            )
-          }
+              mentions: [user]
+            }
+          )
+        }
 
-          // ✅ GOODBYE
-          if (
-            data.action === 'remove'
-          ) {
+        // ✅ GOODBYE
+        if (
+          data.action === 'remove' &&
+          db.goodbye.includes(data.id)
+        ) {
 
-            await sock.sendMessage(
-              data.id,
-              {
-                image: { url: pp },
+          await sock.sendMessage(
+            data.id,
+            {
+              image: { url: pp },
 
-                caption:
+              caption:
 `╭━━━〔 CRIMSON BOT GOODBYE 〕━━━⬣
 
 ┃ 👋 Au revoir @${username}
@@ -331,21 +341,21 @@ Math.round(
 
 ╰━━━━━━━━━━━━━━━━⬣`,
 
-                mentions: [user]
-              }
-            )
-          }
+              mentions: [user]
+            }
+          )
         }
-
-      } catch (e) {
-
-        console.log(
-          'WELCOME ERROR:',
-          e.message
-        )
       }
+
+    } catch (e) {
+
+      console.log(
+        'WELCOME ERROR:',
+        e.message
+      )
     }
-  )
+  }
+)
 
   // ✅ MESSAGE HANDLER
   sock.ev.on(
