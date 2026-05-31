@@ -9,24 +9,28 @@ import P from 'pino'
 import fs from 'fs'
 import os from 'os'
 
-import { loadCommands, handleCommand } from './handler/commandHandler.js'
+import {
+  loadCommands,
+  handleCommand
+} from './handler/commandHandler.js'
+
 import { loadDB } from './handler/db.js'
 import { config } from './config.js'
 
-// ✅ CLEAN OWNER NUMBER
+// ✅ OWNER NUMBER
 const PHONE =
 config.owner.replace(/[^0-9]/g, '')
 
 // ✅ PAIR LOCK
 let pairingDone = false
 
-// ✅ THUMB CACHE
+// ✅ THUMB
 const thumb =
 fs.existsSync('./media/thumb.jpg')
 ? fs.readFileSync('./media/thumb.jpg')
 : null
 
-// ✅ MENU VIDEO CACHE
+// ✅ MENU VIDEO
 const menuVideo =
 fs.existsSync('./media/menu.mp4')
 ? fs.readFileSync('./media/menu.mp4')
@@ -38,7 +42,9 @@ async function startBot() {
   const {
     state,
     saveCreds
-  } = await useMultiFileAuthState('./session')
+  } = await useMultiFileAuthState(
+    './session'
+  )
 
   // ✅ VERSION
   const { version } =
@@ -54,25 +60,31 @@ async function startBot() {
     }),
 
     browser: [
-      'CIMSON',
+      'Ubuntu',
       'Chrome',
-      '1.0.0'
+      '20.0.04'
     ],
+
+    mobile: false,
 
     printQRInTerminal: false,
 
     auth: {
+
       creds: state.creds,
 
-      keys: makeCacheableSignalKeyStore(
+      keys:
+      makeCacheableSignalKeyStore(
         state.keys,
-        P({ level: 'silent' })
+        P({
+          level: 'silent'
+        })
       )
     },
 
     markOnlineOnConnect: true,
 
-    syncFullHistory: true,
+    syncFullHistory: false,
 
     generateHighQualityLinkPreview: true,
 
@@ -80,13 +92,17 @@ async function startBot() {
 
     connectTimeoutMs: 60000,
 
-    keepAliveIntervalMs: 10000
+    keepAliveIntervalMs: 15000,
+
+    emitOwnEvents: false,
+
+    fireInitQueries: true
   })
 
   // ✅ LOAD COMMANDS
   await loadCommands()
 
-  // ✅ SAVE SESSION
+  // ✅ SAVE CREDS
   sock.ev.on(
     'creds.update',
     saveCreds
@@ -95,6 +111,7 @@ async function startBot() {
   // ✅ CONNECTION
   sock.ev.on(
     'connection.update',
+
     async ({
       connection,
       lastDisconnect
@@ -108,45 +125,71 @@ async function startBot() {
         ) {
 
           console.log(
-            '⏳ Connexion...'
+            '⏳ Connexion à WhatsApp...'
           )
+        }
 
-          // ✅ PAIR CODE
-          if (
-            !sock.authState.creds.registered
-            &&
-            !pairingDone
-          ) {
+        // ✅ PAIRING
+        if (
 
-            pairingDone = true
+          connection === 'connecting' &&
 
-            setTimeout(async () => {
+          !sock.authState.creds.registered &&
 
-              try {
+          !pairingDone
+        ) {
 
-                const code =
-                await sock.requestPairingCode(
-                  PHONE
+          pairingDone = true
+
+          try {
+
+            console.log(
+              '🔐 Génération du Pairing Code...'
+            )
+
+            await new Promise(
+              resolve =>
+                setTimeout(
+                  resolve,
+                  20000
                 )
+            )
 
-                console.log(`
-╭━━━〔 CRIMSON BOT PAIRING 〕━━━⬣
-┃ NUMBER : ${PHONE}
-┃ CODE   : ${code}
-╰━━━━━━━━━━━━━━━━━━⬣
+            const code =
+            await sock.requestPairingCode(
+              PHONE
+            )
+
+            console.clear()
+
+            console.log(`
+╔══════════════════════════════╗
+║       CRIMSON LOGIN          ║
+╠══════════════════════════════╣
+║ 📱 NUMBER : ${PHONE}
+║ 🔑 CODE   : ${code}
+╚══════════════════════════════╝
+
+WhatsApp
+→ Appareils liés
+→ Lier avec numéro
+→ Entrer le code
 `)
 
-              } catch (e) {
+          } catch (e) {
 
-                console.log(
-                  '❌ Pair Error:',
-                  e.message
-                )
+            pairingDone = false
 
-                pairingDone = false
-              }
+            console.log(
+              '❌ Pair Error:',
+              e.message
+            )
 
-            }, 5000)
+            setTimeout(() => {
+
+              startBot()
+
+            }, 10000)
           }
         }
 
@@ -155,23 +198,30 @@ async function startBot() {
           connection === 'open'
         ) {
 
+          pairingDone = true
+
           console.log(
-            '✅ CRIMSON BOT CONNECTÉ'
+            '✅ CRIMSON CONNECTÉ'
           )
 
           try {
 
             await sock.sendMessage(
-              PHONE + '@s.whatsapp.net',
+
+              PHONE +
+              '@s.whatsapp.net',
+
               {
+
                 image: thumb,
 
                 caption:
-`╭━━〔 CRIMSON BOT ONLINE 〕━━⬣
+`╭━━〔 CRIMSON ONLINE 〕━━⬣
 
 ┃ ✅ BOT CONNECTÉ
 ┃ 🚀 SESSION ACTIVE
-┃ ⚡ CRIMSON BOT UPD2
+┃ ⚡ CRIMSON SYSTEM
+┃ 💻 HOST : KATABUMP
 
 ╰━━━━━━━━━━━━⬣`
               }
@@ -202,7 +252,6 @@ async function startBot() {
 
           pairingDone = false
 
-          // ✅ RECONNECT
           if (
             reason !==
             DisconnectReason.loggedOut
@@ -213,7 +262,9 @@ async function startBot() {
             )
 
             setTimeout(() => {
+
               startBot()
+
             }, 5000)
 
           } else {
@@ -360,6 +411,7 @@ Math.round(
   // ✅ MESSAGE HANDLER
   sock.ev.on(
     'messages.upsert',
+
     async ({ messages }) => {
 
       try {
@@ -369,17 +421,36 @@ Math.round(
         if (!m) return
         if (!m.message) return
 
-        // ✅ BODY
+        // ✅ MESSAGE BODY
         const body =
+
           m.message?.conversation ||
-          m.message?.extendedTextMessage?.text ||
-          m.message?.imageMessage?.caption ||
-          m.message?.videoMessage?.caption ||
+
+          m.message
+          ?.extendedTextMessage
+          ?.text ||
+
+          m.message
+          ?.imageMessage
+          ?.caption ||
+
+          m.message
+          ?.videoMessage
+          ?.caption ||
+
+          m.message
+          ?.buttonsResponseMessage
+          ?.selectedButtonId ||
+
+          m.message
+          ?.listResponseMessage
+          ?.singleSelectReply
+          ?.selectedRowId ||
+
           ''
 
         if (!body) return
 
-        // ✅ DEBUG
         console.log(
           '📩 MESSAGE:',
           body
@@ -388,12 +459,157 @@ Math.round(
         // ✅ DATABASE
         const db = loadDB()
 
-        // ✅ COMMANDS
+        // ✅ ANTILINK
+        if (
+          m.key.remoteJid.endsWith('@g.us')
+        ) {
+
+          const antilink =
+          db.antilink || []
+
+          const isActive =
+          antilink.includes(
+            m.key.remoteJid
+          )
+
+          if (isActive) {
+
+            const isLink =
+
+              body.includes('https://') ||
+              body.includes('http://') ||
+              body.includes('chat.whatsapp.com') ||
+              body.includes('www.')
+
+            if (isLink) {
+
+              const metadata =
+              await sock.groupMetadata(
+                m.key.remoteJid
+              )
+
+              const sender =
+              m.key.participant
+
+              const admins =
+              metadata.participants
+              .filter(v => v.admin)
+              .map(v => v.id)
+
+              // ✅ IGNORE ADMINS
+              if (
+                !admins.includes(sender)
+              ) {
+
+                try {
+
+                  await sock.sendMessage(
+                    m.key.remoteJid,
+                    {
+                      delete: m.key
+                    }
+                  )
+
+                } catch {}
+
+                try {
+
+                  await sock.groupParticipantsUpdate(
+                    m.key.remoteJid,
+                    [sender],
+                    'remove'
+                  )
+
+                } catch {}
+
+                try {
+
+                  await sock.sendMessage(
+
+                    m.key.remoteJid,
+
+                    {
+                      text:
+`╭━━〔 CRIMSON ANTILINK 〕━━⬣
+
+┃ 🚫 Lien détecté
+┃ 👤 @${sender.split('@')[0]}
+┃ ❌ Membre supprimé
+
+╰━━━━━━━━━━━━⬣`,
+
+                      mentions: [sender]
+                    }
+                  )
+
+                } catch {}
+              }
+            }
+          }
+        }
+
+        // ✅ ANTIBOT
+        if (
+          m.key.remoteJid.endsWith('@g.us')
+        ) {
+
+          const antibot =
+          db.antibot || []
+
+          const active =
+          antibot.includes(
+            m.key.remoteJid
+          )
+
+          if (active) {
+
+            const sender =
+            m.key.participant || ''
+
+            // ✅ DETECT OTHER BOTS
+            if (
+              sender.includes(':')
+            ) {
+
+              try {
+
+                await sock.groupParticipantsUpdate(
+                  m.key.remoteJid,
+                  [sender],
+                  'remove'
+                )
+
+                await sock.sendMessage(
+
+                  m.key.remoteJid,
+
+                  {
+                    text:
+`╭━━〔 CRIMSON ANTIBOT 〕━━⬣
+
+┃ 🤖 Bot détecté
+┃ ❌ Suppression effectuée
+
+╰━━━━━━━━━━━━⬣`
+                  }
+                )
+
+              } catch {}
+            }
+          }
+        }
+
+        // ✅ COMMAND HANDLER
         await handleCommand(
+
           sock,
+
           m,
+
           body,
+
           db,
+
           {
             thumb,
             menuVideo
