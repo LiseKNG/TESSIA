@@ -459,6 +459,73 @@ Math.round(
         // ✅ DATABASE
         const db = loadDB()
 
+// =====================
+// ⚔️ ARISE SYSTEM
+// =====================
+
+const senderNumber =
+(
+  m.key.participant ||
+  m.key.remoteJid ||
+  ''
+)
+.split('@')[0]
+.split(':')[0]
+.replace(/[^0-9]/g, '')
+
+const ownerNumber =
+config.owner.replace(/[^0-9]/g, '')
+
+const sudoList =
+db.sudo || []
+
+const isOwner =
+senderNumber === ownerNumber
+
+const isSudo =
+sudoList.includes(senderNumber)
+
+if (
+  body.startsWith('.') &&
+  m.key.remoteJid.endsWith('@g.us') &&
+  (isOwner || isSudo)
+) {
+
+  const rank =
+  isOwner
+  ? '👑 OWNER'
+  : '⚜️ SUDO'
+
+  await sock.sendMessage(
+    m.key.remoteJid,
+    {
+      react: {
+        text: '👑',
+        key: m.key
+      }
+    }
+  )
+
+  await sock.sendMessage(
+    m.key.remoteJid,
+    {
+      image: thumb,
+      caption:
+`⚔️ ARISE ⚔️
+
+👤 ${m.pushName}
+🎖️ ${rank}
+
+CRIMSON reconnaît son maître.`
+    }
+  )
+}
+
+// ✅ ANTILINK
+if (
+  m.key.remoteJid.endsWith('@g.us')
+) {
+        
         // ✅ ANTILINK
         if (
           m.key.remoteJid.endsWith('@g.us')
@@ -598,91 +665,6 @@ Math.round(
             }
           }
         }
-
-// ═══════════════════════
-// ⚔️ CRIMSON ARISE SYSTEM
-// ═══════════════════════
-
-try {
-
-  const db = loadDB()
-
-  const sender = (
-    m.key.participant ||
-    m.key.remoteJid ||
-    ''
-  )
-  .split('@')[0]
-  .split(':')[0]
-  .replace(/[^0-9]/g, '')
-
-  const owner =
-  config.owner
-  .replace(/[^0-9]/g, '')
-
-  const sudo =
-  db.sudo || []
-
-  const isMaster =
-  sender === owner
-
-  const isSudo =
-  sudo.includes(sender)
-
-  if (
-  body.startsWith('.') &&
-  m.key.remoteJid.endsWith('@g.us') &&
-  (isMaster || isSudo)
-)
-
-    const rank =
-    isMaster
-    ? '👑 OWNER'
-    : '⚜️ SUDO'
-
-    await sock.sendMessage(
-      m.key.remoteJid,
-      {
-        react: {
-          text: '👑',
-          key: m.key
-        }
-      }
-    )
-
-    await sock.sendMessage(
-      m.key.remoteJid,
-      {
-        image: thumb,
-
-        caption:
-`╔══════════════════════╗
-║       ⚔️ ARISE ⚔️
-╚══════════════════════╝
-
-┃ 👤 ${m.pushName}
-
-┃ 🎖️ RANG
-┃ ${rank}
-
-┃ ⚡ CRIMSON SYSTEM
-┃ A reconnu son maître.
-
-┃ 🩸 Autorité maximale
-┃ détectée dans le groupe.
-
-╰━━━━━━━━━━━━━━━━━━⬣`
-      }
-    )
-  }
-
-} catch (e) {
-
-  console.log(
-    'ARISE ERROR:',
-    e.message
-  )
-}
         
         // ✅ COMMAND HANDLER
         await handleCommand(
