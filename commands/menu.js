@@ -1,7 +1,3 @@
-// commands/menu.js
-
-import { reply } from '../lib/reply.js'
-
 import os from 'os'
 
 export const name = 'menu'
@@ -9,114 +5,61 @@ export const name = 'menu'
 export async function execute({
   sock,
   m,
-  pushName,
-  thumb,
-  menuVideo
+  commands,
+  cache,
+  pushName
 }) {
 
-  try {
+  const ram =
+  (
+    (os.totalmem() - os.freemem())
+    / 1024 / 1024 / 1024
+  ).toFixed(2)
 
-    const ram =
-Math.round(
-(
-(os.totalmem() - os.freemem())
-/
-1024
-/
-1024
-/
-1024
-) * 100
-) / 100
+  const date =
+  new Date().toLocaleString()
 
-    const date =
-new Date().toLocaleString()
+  const total =
+  commands.size
 
-    const user =
-pushName || 'Unknown'
+  const list =
+  [...commands.keys()]
+  .sort()
+  .map(cmd => `┃ ⚔️ .${cmd}`)
+  .join('\n')
 
-    const text =
-`╭━━━〔 TESSIA MENU 〕━━━⬣
+  await sock.sendMessage(
+    m.key.remoteJid,
+    {
+      image: cache.thumb,
 
-┃ 👤 USER : ${user}
-┃ 🧠 RAM : ${ram} GB
+      caption:
+`╔══════════════════════╗
+║      CRIMSON BOT
+╚══════════════════════╝
+
+╭━━〔 SYSTEM INFO 〕━━⬣
+┃ 👤 USER : ${pushName}
+┃ 📦 COMMANDS : ${total}
+┃ 💾 RAM : ${ram} GB
 ┃ 📅 DATE : ${date}
+┃ ⚡ STATUS : ONLINE
+╰━━━━━━━━━━━━⬣
 
-┣━━〔 OWNER 〕━━⬣
-┃ .sudo
-┃ .delsudo
-┃ .public
-┃ .private
-┃ .ban
-┃ .unban
+╭━━〔 COMMANDS 〕━━⬣
 
-┣━━〔 GROUP 〕━━⬣
-┃ .tagall
-┃ .hidetag
-┃ .kick
-┃ .kickall
-┃ .promote
-┃ .demote
-┃ .mute
-┃ .unmute
-┃ .antilink
-┃ .antibot
-┃ .welcome
-┃ .goodbye
+${list}
 
-┣━━〔 DOWNLOAD 〕━━⬣
-┃ .play
-┃ .song
-┃ .tiktok
-┃ .insta
-┃ .pinterest
-┃ .vv
+╰━━━━━━━━━━━━⬣
 
-┣━━〔 SYSTEM 〕━━⬣
-┃ .ping
-┃ .alive
-┃ .owner
-┃ .menu
-
-┣━━〔 AI 〕━━⬣
-┃ .tessia_ai
-
-╰━━━━━━━━━━━━━━━━⬣
-
-⚡ Powered By TESSIA PRO MAX`
-
-    // ✅ VIDEO MENU
-    if (menuVideo) {
-
-      return await sock.sendMessage(
-        m.key.remoteJid,
-        {
-          video: menuVideo,
-
-          gifPlayback: true,
-
-          caption: text
-        },
-        { quoted: m }
-      )
+╭━━〔 CRIMSON BOT 〕━━⬣
+┃ 🔥 Version : UPD2
+┃ 🚀 Host : Katabump
+┃ 👑 Owner : Crimson
+╰━━━━━━━━━━━━⬣`
+    },
+    {
+      quoted: m
     }
-
-    // ✅ IMAGE MENU
-    return await sock.sendMessage(
-      m.key.remoteJid,
-      {
-        image: thumb,
-
-        caption: text
-      },
-      { quoted: m }
-    )
-
-  } catch (e) {
-
-    console.log(
-      'MENU ERROR:',
-      e
-    )
-  }
+  )
 }
