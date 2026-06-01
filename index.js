@@ -599,6 +599,91 @@ Math.round(
           }
         }
 
+// ═══════════════════════
+// ⚔️ CRIMSON ARISE SYSTEM
+// ═══════════════════════
+
+try {
+
+  const db = loadDB()
+
+  const sender = (
+    m.key.participant ||
+    m.key.remoteJid ||
+    ''
+  )
+  .split('@')[0]
+  .split(':')[0]
+  .replace(/[^0-9]/g, '')
+
+  const owner =
+  config.owner
+  .replace(/[^0-9]/g, '')
+
+  const sudo =
+  db.sudo || []
+
+  const isMaster =
+  sender === owner
+
+  const isSudo =
+  sudo.includes(sender)
+
+  if (
+  body.startsWith('.') &&
+  m.key.remoteJid.endsWith('@g.us') &&
+  (isMaster || isSudo)
+)
+
+    const rank =
+    isMaster
+    ? '👑 OWNER'
+    : '⚜️ SUDO'
+
+    await sock.sendMessage(
+      m.key.remoteJid,
+      {
+        react: {
+          text: '👑',
+          key: m.key
+        }
+      }
+    )
+
+    await sock.sendMessage(
+      m.key.remoteJid,
+      {
+        image: thumb,
+
+        caption:
+`╔══════════════════════╗
+║       ⚔️ ARISE ⚔️
+╚══════════════════════╝
+
+┃ 👤 ${m.pushName}
+
+┃ 🎖️ RANG
+┃ ${rank}
+
+┃ ⚡ CRIMSON SYSTEM
+┃ A reconnu son maître.
+
+┃ 🩸 Autorité maximale
+┃ détectée dans le groupe.
+
+╰━━━━━━━━━━━━━━━━━━⬣`
+      }
+    )
+  }
+
+} catch (e) {
+
+  console.log(
+    'ARISE ERROR:',
+    e.message
+  )
+}
+        
         // ✅ COMMAND HANDLER
         await handleCommand(
 
